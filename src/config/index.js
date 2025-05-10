@@ -9,7 +9,7 @@ const tokenMiddleware  = require("../middleware/tokenMiddleware");
 const multer = require('multer');
 
 app.use(cors({
-  origin: "", // Autoriser les requêtes venant du client
+  origin: "http://localhost:3000", // Autoriser les requêtes venant du client
   credentials: true, // Autoriser les cookies et les headers d'authentification
 }));
 
@@ -39,3 +39,7 @@ app.use("/api/task", taskController);
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server is running on port ${port}`);
 });
+
+module.exports = app;
+
+

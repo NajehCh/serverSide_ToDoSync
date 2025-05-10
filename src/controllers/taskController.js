@@ -5,18 +5,28 @@ const { createTask,deleteTask,getTaskById, getAllTasks, getTasksByUser,updateTas
 
 // Inscription
 const createTaskController = async (req, res) => {
-  const {title, description,priority,dueDate}=req.body
-  console.log(title)
+  const {title, description,priority,dueDate,status,files,completed}=req.body
 
+  let isCompleted = completed === "true";
   const uid=req.user.uid
+
   try {
+     // Vérification du titre
+     if (!title) {
+      return res.status(400).json({
+        success: false,
+        error: "Please provide a title",
+      });
+    }
+
     // Récupérer les données de la requête (envoyées dans le body)
     const taskData ={ 
       title,
       description,
       priority,
       dueDate,
-      user:uid
+      user:uid,
+      status,files,isCompleted
     };
     // Appeler la fonction createTask du modèle
     const newTask = await createTask(taskData);    
@@ -58,11 +68,10 @@ const getTaskByIdController = async (req, res) => {
       message: "Task retrieved successfully",
     });
   } catch (error) {
-    // Gérer les erreurs (404 pour tâche non trouvée, 400 pour autres erreurs)
     const statusCode = error.message === "Task not found" ? 404 : 400;
     res.status(statusCode).json({
       success: false,
-      error: error.message,
+      message: error.message,
     });
   }
 };

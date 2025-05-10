@@ -54,7 +54,6 @@ const tasksCollection = db.collection("tasks");
 // };
 const createTask = async (taskData, files = []) => {
   try {
-    if (!taskData.title) throw new Error("Please provide a title");
     if (!taskData.user) throw new Error("User reference is required");
 
     const trimmedTitle = taskData.title.trim();
@@ -68,6 +67,7 @@ const createTask = async (taskData, files = []) => {
     if (!querySnapshot.empty) {
       throw new Error("Impossible: A task with this title already exists");
     }
+    let  completed = taskData.isCompleted
 
     // ⬇️ Upload des fichiers
     const fileUrls = [];
@@ -90,7 +90,7 @@ const createTask = async (taskData, files = []) => {
       description: taskData.description || "No description",
       dueDate: taskData.dueDate || admin.firestore.Timestamp.now(),
       status: taskData.status || "active",
-      completed: taskData.completed || false,
+      completed: completed || false,
       priority: taskData.priority || "low",
       user: taskData.user,
       files: fileUrls, // Ajout des URLs
