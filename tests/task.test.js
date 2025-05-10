@@ -1,34 +1,75 @@
+jest.mock("firebase-admin", () => {
+  return {
+    credential: {
+      cert: jest.fn(() => ({
+        project_id: "your-project-id",
+        private_key_id: "some-key-id",
+        private_key: "-----BEGIN PRIVATE KEY-----\nSomePrivateKey\n-----END PRIVATE KEY-----\n",
+        client_email: "firebase-adminsdk@your-project-id.iam.gserviceaccount.com",
+        client_id: "client-id",
+        auth_uri: "https://accounts.google.com/o/oauth2/auth",
+        token_uri: "https://oauth2.googleapis.com/token",
+        auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+        client_x509_cert_url: "your-cert-url"
+      }))
+    },
+    initializeApp: jest.fn(),
+    auth: jest.fn(() => ({
+      createUser: jest.fn(),
+      getUser: jest.fn(() => Promise.resolve({ uid: 'user123' })),
+      verifyIdToken: jest.fn(() => Promise.resolve({ uid: 'user123' }))
+    })),
+    firestore: jest.fn(() => ({
+      collection: jest.fn(() => ({
+        doc: jest.fn(() => ({
+          set: jest.fn(),
+          get: jest.fn(() =>
+            Promise.resolve({
+              exists: true,
+              data: () => ({})
+            })
+          )
+        }))
+      }))
+    }))
+  };
+});
+
+// === Imports ===
 const request = require("supertest");
 const express = require("express");
 const app = express();
-const { createTaskController,getTaskByIdController } = require("../src/controllers/taskController");
+const {
+  createTaskController,
+  getTaskByIdController
+} = require("../src/controllers/taskController");
 
+// === Mock du modèle TaskModel ===
 jest.mock("../src/model/TaskModel", () => ({
-    createTask: jest.fn().mockResolvedValue({
-      id: "123456",
-      title: "Test Task",
-      description: "Ceci est une tâche de test",
-      priority: "high",
-      dueDate: "2025-06-10T00:00:00Z",
-      status: "active",
-      completed: false,
+  createTask: jest.fn().mockResolvedValue({
+    id: "123456",
+    title: "Test Task",
+    description: "Ceci est une tâche de test",
+    priority: "high",
+    dueDate: "2025-06-10T00:00:00Z",
+    status: "active",
+    completed: false,
+    user: "user123"
+  }),
+  getTaskById: jest.fn((id) => {
+    if (id === "invalidID") {
+      return Promise.reject(new Error("Task not found"));
+    }
+    return Promise.resolve({
+      id,
+      title: "Mocked Task",
+      description: "Description mockée",
       user: "user123"
-    }),
-    getTaskById: jest.fn((id) => {
-      if (id === "invalidID") {
-        return Promise.reject(new Error("Task not found"));
-      }
-      return Promise.resolve({
-        id,
-        title: "Mocked Task",
-        description: "Description mockée",
-        user: "user123"
-      });
-    }),
-  }));
-  
+    });
+  }),
+}));
 
-// Middleware pour parser le JSON
+// === Configuration express ===
 app.use(express.json());
 
 // Simuler l’authentification
@@ -37,9 +78,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// Route testée
+// Routes testées
 app.post("/api/task/create_task", createTaskController);
 app.get("/api/task/:uid", getTaskByIdController);
+
+// === Tests ===
 describe("POST /tasks", () => {
   it("doit créer une tâche avec succès", async () => {
     const response = await request(app)
@@ -74,10 +117,9 @@ describe("POST /tasks", () => {
   });
 });
 
-
 describe("GET /api/task/:uid", () => {
   it("doit récupérer une tâche par son ID", async () => {
-    const response = await request(app).get("/api/task/puRR3zJBXnfTa7SOdafR");  // Remplace par un ID valide
+    const response = await request(app).get("/api/task/puRR3zJBXnfTa7SOdafR");  // ID simulé
     expect(response.statusCode).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.data).toHaveProperty("title");
