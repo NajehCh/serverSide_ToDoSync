@@ -1,24 +1,24 @@
+// === Mock du fichier serviceAccountKey.json ===
+jest.mock('../src/config/serviceAccountKey.json', () => ({
+  type: "service_account",
+  project_id: "your-project-id",
+  private_key_id: "some-key-id",
+  private_key: "-----BEGIN PRIVATE KEY-----\nSomePrivateKey\n-----END PRIVATE KEY-----\n",
+  client_email: "firebase-adminsdk@your-project-id.iam.gserviceaccount.com",
+  client_id: "client-id",
+  auth_uri: "https://accounts.google.com/o/oauth2/auth",
+  token_uri: "https://oauth2.googleapis.com/token",
+  auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+  client_x509_cert_url: "your-cert-url"
+}));
+
+// === Mock de firebase-admin ===
 jest.mock("firebase-admin", () => {
   return {
     credential: {
-      cert: jest.fn(() => ({
-        project_id: "your-project-id",
-        private_key_id: "some-key-id",
-        private_key: "-----BEGIN PRIVATE KEY-----\nSomePrivateKey\n-----END PRIVATE KEY-----\n",
-        client_email: "firebase-adminsdk@your-project-id.iam.gserviceaccount.com",
-        client_id: "client-id",
-        auth_uri: "https://accounts.google.com/o/oauth2/auth",
-        token_uri: "https://oauth2.googleapis.com/token",
-        auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
-        client_x509_cert_url: "your-cert-url"
-      }))
+      cert: jest.fn()
     },
     initializeApp: jest.fn(),
-    auth: jest.fn(() => ({
-      createUser: jest.fn(),
-      getUser: jest.fn(() => Promise.resolve({ uid: 'user123' })),
-      verifyIdToken: jest.fn(() => Promise.resolve({ uid: 'user123' }))
-    })),
     firestore: jest.fn(() => ({
       collection: jest.fn(() => ({
         doc: jest.fn(() => ({
