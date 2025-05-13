@@ -9,7 +9,7 @@ const tokenMiddleware  = require("../middleware/tokenMiddleware");
 const multer = require('multer');
 
 app.use(cors({
-  origin: "3.224.198.125", // Autoriser les requêtes venant du client
+  origin: "http://3.224.198.125:3000", // Autoriser les requêtes venant du client
   credentials: true, // Autoriser les cookies et les headers d'authentification
 }));
 
