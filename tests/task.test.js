@@ -12,26 +12,17 @@ jest.mock('../src/config/serviceAccountKey.json', () => ({
   client_x509_cert_url: "your-cert-url"
 }));
 
-// === Mock de firebase-admin ===
-jest.mock("firebase-admin", () => {
+jest.mock('firebase-admin', () => {
+  const originalModule = jest.requireActual('firebase-admin');
   return {
+    ...originalModule,
+    auth: jest.fn(() => ({
+      verifyIdToken: jest.fn().mockResolvedValue({ uid: 'test-uid' }),
+    })),
     credential: {
-      cert: jest.fn()
+      cert: jest.fn(),
     },
     initializeApp: jest.fn(),
-    firestore: jest.fn(() => ({
-      collection: jest.fn(() => ({
-        doc: jest.fn(() => ({
-          set: jest.fn(),
-          get: jest.fn(() =>
-            Promise.resolve({
-              exists: true,
-              data: () => ({})
-            })
-          )
-        }))
-      }))
-    }))
   };
 });
 
