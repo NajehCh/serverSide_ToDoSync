@@ -3,7 +3,7 @@ pipeline {
     environment {
         NODEJS_HOST = "ubuntu@54.243.150.44"
         DEPLOY_DIR = "/home/ubuntu/backend"
-        FIREBASE_KEY = credentials('firebase-key') // Clé Firebase
+        FIREBASE_KEY = credentials('firebase-key')
     }
     triggers {
         githubPush()
@@ -33,7 +33,7 @@ pipeline {
         }
         stage ('Configurer la clé Firebase') {
             steps {
-                withCredentials([file(credentialsId: 'firebaseCredentials', variable: 'FIREBASE_CREDENTIALS')]) {
+                withCredentials([file(credentialsId: 'firebase-key', variable: 'FIREBASE_CREDENTIALS')]) {
                     sh 'cp "$FIREBASE_CREDENTIALS" /var/lib/jenkins/workspace/serveur_deploy/src/config/serviceAccountKey.json'
                 }
             }
