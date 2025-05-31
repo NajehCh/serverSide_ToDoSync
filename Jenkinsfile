@@ -14,8 +14,20 @@ pipeline {
                 git url: 'https://github.com/NajehCh/serverSide_ToDoSync.git', branch: 'main'
             }
         }
-        stage ('Installer les dépendances'){
+        stage('Installer les dépendances') {
             steps {
+                echo 'Vérification de Node.js'
+
+                sh '''
+                    if ! command -v node > /dev/null 2>&1; then
+                        curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+                        sudo apt-get install -y nodejs
+                    else
+                        echo "Node.js est déjà installé"
+                    fi
+                '''
+
+                echo 'Installation des dépendances avec npm'
                 sh 'npm install'
             }
         }
