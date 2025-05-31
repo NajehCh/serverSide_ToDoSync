@@ -1,8 +1,8 @@
 pipeline {
     agent any
     environment {
-        NODEJS HOST = "ubuntu@54.243.150.44"
-        DEPLOY DIR = "/home/ubuntu/backend"
+        NODEJS_HOST = "ubuntu@54.243.150.44"
+        DEPLOY_DIR = "/home/ubuntu/backend"
         FIREBASE_KEY = credentials('firebase-key') // Clé Firebase
     }
     triggers {
