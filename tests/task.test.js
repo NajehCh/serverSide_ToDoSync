@@ -45,7 +45,8 @@ jest.mock("../src/model/TaskModel", () => ({
     dueDate: "2025-06-10T00:00:00Z",
     status: "active",
     completed: false,
-    user: "user123"
+    user: "user123",
+    projectId:"54dsdqsdqdqsd6"
   }),
   getTaskById: jest.fn((id) => {
     if (id === "invalidID") {
