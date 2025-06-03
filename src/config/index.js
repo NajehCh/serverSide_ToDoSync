@@ -2,21 +2,20 @@ const express= require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const userRoutes = require('../routes/userRoutes')
-const taskController = require('../routes/taskRoutes')
+const taskRoutes = require('../routes/taskRoutes')
+const projectRoutes = require('../routes/projectRoutes')
 const app = express();
 const cors = require("cors");
-const tokenMiddleware  = require("../middleware/tokenMiddleware");
-const multer = require('multer');
-
-app.use(cors({
-  origin: "http://3.224.198.125:3000", // Autoriser les requêtes venant du client
-  credentials: true, // Autoriser les cookies et les headers d'authentification
-}));
 
 // app.use(cors({
-//   origin: "http://localhost:3000", // Autoriser les requêtes venant du client
+//   origin: "http://3.224.198.125:3000", // Autoriser les requêtes venant du client
 //   credentials: true, // Autoriser les cookies et les headers d'authentification
 // }));
+
+app.use(cors({
+  origin: "http://localhost:3000", // Autoriser les requêtes venant du client
+  credentials: true, // Autoriser les cookies et les headers d'authentification
+}));
 
 
 
@@ -30,8 +29,8 @@ const port = process.env.PORT || 5000;
 
 
 app.use("/api/auth", userRoutes);
-app.use("/api/task", taskController);
-
+app.use("/api/task", taskRoutes);
+app.use("/api/projects",projectRoutes)
 
 
 

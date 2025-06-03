@@ -5,40 +5,50 @@ const { createTask,deleteTask,getTaskById, getAllTasks, getTasksByUser,updateTas
 
 // Inscription
 const createTaskController = async (req, res) => {
-  const {title, description,priority,dueDate,status,files,completed}=req.body
+  const { title, description, priority, dueDate, status, files, completed, projectId } = req.body;
 
   let isCompleted = completed === "true";
-  const uid=req.user.uid
+  const uid = req.user.uid;
 
   try {
-     // Vérification du titre
-     if (!title) {
+    // Vérification du titre
+    if (!title) {
       return res.status(400).json({
         success: false,
         error: "Please provide a title",
       });
     }
 
-    // Récupérer les données de la requête (envoyées dans le body)
-    const taskData ={ 
+    // Vérification de l'ID du projet
+    if (!projectId) {
+      return res.status(400).json({
+        success: false,
+        error: "Project ID is required",
+      });
+    }
+
+    // Construction des données de la tâche
+    const taskData = {
       title,
       description,
       priority,
       dueDate,
-      user:uid,
-      status,files,isCompleted
+      user: uid,
+      status,
+      isCompleted,
+      projectId, // ✅ Ajout ici
+      files,     // ⚠️ Vérifie si tu uploades depuis frontend ou via multer
     };
-    // Appeler la fonction createTask du modèle
-    const newTask = await createTask(taskData);    
 
-    // Répondre avec un statut 201 (Created) et la tâche créée
+    // Appel à la fonction createTask
+    const newTask = await createTask(taskData);
+
     res.status(201).json({
-        success: true,
-        data: newTask,
-        message: "Task created successfully",
-      });
+      success: true,
+      data: newTask,
+      message: "Task created successfully",
+    });
   } catch (error) {
-    // Gérer les erreurs et renvoyer une réponse appropriée
     res.status(400).json({
       success: false,
       error: error.message,

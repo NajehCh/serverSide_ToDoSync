@@ -67,19 +67,25 @@ const createTask = async (taskData, files = []) => {
     if (!querySnapshot.empty) {
       throw new Error("Impossible: A task with this title already exists");
     }
-    let  completed = taskData.isCompleted
+
+    const completed = taskData.isCompleted;
+    const projectId = taskData.projectId;
+    if (!projectId) throw new Error("Project ID is required for task creation");
 
     // ⬇️ Upload des fichiers
     const fileUrls = [];
 
     for (const file of files) {
-      const storageRef = admin.storage().bucket().file(`tasks/${Date.now()}_${file.name}`);
+      const storageRef = admin
+        .storage()
+        .bucket()
+        .file(`tasks/${Date.now()}_${file.name}`);
       await storageRef.save(file.buffer, {
         metadata: { contentType: file.mimetype },
       });
       const [url] = await storageRef.getSignedUrl({
-        action: 'read',
-        expires: '03-01-2500',
+        action: "read",
+        expires: "03-01-2500",
       });
       fileUrls.push(url);
     }
@@ -93,7 +99,8 @@ const createTask = async (taskData, files = []) => {
       completed: completed || false,
       priority: taskData.priority || "low",
       user: taskData.user,
-      files: fileUrls, // Ajout des URLs
+      projectId: projectId, 
+      files: fileUrls,
       createdAt: admin.firestore.Timestamp.now(),
       updatedAt: admin.firestore.Timestamp.now(),
     };
