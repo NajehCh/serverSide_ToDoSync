@@ -7,15 +7,15 @@ const projectRoutes = require('../routes/projectRoutes')
 const app = express();
 const cors = require("cors");
 
-// app.use(cors({
-//   origin: "http://3.224.198.125:3000", // Autoriser les requêtes venant du client
-//   credentials: true, // Autoriser les cookies et les headers d'authentification
-// }));
-
 app.use(cors({
-  origin: "http://localhost:3000", // Autoriser les requêtes venant du client
+  origin: "http://3.224.198.125:3000", // Autoriser les requêtes venant du client
   credentials: true, // Autoriser les cookies et les headers d'authentification
 }));
+
+// app.use(cors({
+//   origin: "http://localhost:3000", // Autoriser les requêtes venant du client
+//   credentials: true, // Autoriser les cookies et les headers d'authentification
+// }));
 
 
 
