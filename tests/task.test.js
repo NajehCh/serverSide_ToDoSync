@@ -87,6 +87,8 @@ describe("POST /tasks", () => {
         status: "active",
         completed: "false",
         files: [],
+        projectId:"ssqs444qsqs"
+
       });
 
     expect(response.statusCode).toBe(201);
