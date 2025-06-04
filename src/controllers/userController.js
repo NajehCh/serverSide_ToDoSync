@@ -117,7 +117,7 @@ const changePasswordController = async (req, res) => {
   const uid  = req.user.uid
   // Vérifie si les champs requis sont présents
   if (!uid || !oldPassword || !newPassword) {
-    return res.status(400).json({ message: "UID, ancien mot de passe et nouveau mot de passe sont requis" });
+    return res.status(400).json({ message: "UID, ancien mot de passe et nouveau mot de passe sont nécessaire" });
   }
 
   try {
